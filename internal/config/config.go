@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/go-redis/redis/v8"
-	"github.com/jmoiron/sqlx"
-
 	"github.com/b2r2/tg-admin-changer/internal/models"
 	"github.com/sirupsen/logrus"
 )
@@ -15,42 +12,28 @@ import (
 var texts []string
 
 func init() {
-	files := []string{models.Greeting, models.Pricing, models.Repeated}
+	files := []string{models.Greeting, models.Pricing, models.Contacts}
 	texts = append(texts, files...)
 }
 
 type Config struct {
-	bot      *bot
-	logger   *logrus.Logger
-	redis    *Redis
-	database *Database
-	mapping  map[string]*bytes.Buffer
+	bot     *bot
+	logger  *logrus.Logger
+	mapping map[string]*bytes.Buffer
 }
 
 var conf *Config
 
 func Load() error {
-	rd, err := NewRedis()
-	if err != nil {
-		return err
-	}
-
-	db, err := NewDB()
-	if err != nil {
-		return err
-	}
-
 	b, err := newBot()
 	if err != nil {
 		return err
 	}
 
 	conf = &Config{
-		bot:      b,
-		redis:    rd,
-		database: db,
-		logger:   logrus.New(),
-		mapping:  make(map[string]*bytes.Buffer),
+		bot:     b,
+		logger:  logrus.New(),
+		mapping: make(map[string]*bytes.Buffer),
 	}
 
 	return conf.setTextFromFile()
@@ -72,14 +55,6 @@ func (c *Config) GetMapping() map[string]*bytes.Buffer {
 	return conf.mapping
 }
 
-func (c *Config) GetDBConnection() *sqlx.DB {
-	return c.database.GetConnection()
-}
-
-func (c *Config) GetRedis() *redis.Client {
-	return c.redis.GetClient()
-}
-
 func (c *Config) setTextFromFile() error {
 	for _, filename := range texts {
 		b, err := os.ReadFile(filename)
@@ -89,6 +64,5 @@ func (c *Config) setTextFromFile() error {
 
 		c.mapping[filename] = bytes.NewBuffer(b)
 	}
-
 	return nil
 }

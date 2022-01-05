@@ -6,13 +6,11 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/b2r2/tg-admin-changer/internal/repositories"
-
 	"github.com/b2r2/tg-admin-changer/internal/app"
 	"github.com/b2r2/tg-admin-changer/internal/config"
 )
 
-func main() {
+func run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt)
@@ -26,26 +24,27 @@ func main() {
 		}
 	}()
 
-	if err := config.Load(); err != nil {
-		log.Fatalln(err)
-	}
-
 	cfg := config.Get()
 
-	r := repositories.NewRepository(cfg.GetDBConnection(), cfg.GetRedis())
-
-	bot, err := app.New(cfg.GetLogger(), cfg.GetToken(), r)
+	bot, err := app.New(cfg.GetLogger(), cfg.GetToken())
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	go bot.Start(ctx)
+	go bot.Run()
 
 	<-ctx.Done()
 
-	if err = r.Close(); err != nil {
+	bot.Stop()
+	return nil
+}
+
+func main() {
+	if err := config.Load(); err != nil {
 		log.Fatalln(err)
 	}
 
-	bot.Stop()
+	if err := run(); err != nil {
+		log.Fatalln(err)
+	}
 }

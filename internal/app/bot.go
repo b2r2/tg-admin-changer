@@ -3,31 +3,38 @@ package app
 import (
 	"time"
 
-	"github.com/b2r2/tg-admin-changer/internal/repositories"
-
 	"github.com/sirupsen/logrus"
 	tele "gopkg.in/tucnak/telebot.v3"
+)
+
+const (
+	onBtnPrice = "Наши каналы и цены"
+	onContacts = "Наши контакты"
+	onPrev     = "Назад"
+	onStart    = "/start"
+	channel    = -1001383844955
 )
 
 type (
 	bot struct {
 		log    *logrus.Logger
 		bot    *tele.Bot
-		repo   repositories.Repository
-		admins []admin
+		admins admins
 	}
 	admin struct {
-		username string
-		chadId   int64
+		chadId int64
 	}
+	admins []admin
 )
 
-var menu *tele.ReplyMarkup
+var (
+	menu *tele.ReplyMarkup
+)
 
-func New(log *logrus.Logger, t string, r repositories.Repository) (*bot, error) {
+func New(log *logrus.Logger, t string) (*bot, error) {
 	b, err := tele.NewBot(tele.Settings{
 		Token:     t,
-		Poller:    &tele.LongPoller{Timeout: time.Second * 8},
+		Poller:    &tele.LongPoller{Timeout: time.Second * 10},
 		ParseMode: tele.ModeMarkdown,
 	})
 
@@ -35,17 +42,10 @@ func New(log *logrus.Logger, t string, r repositories.Repository) (*bot, error) 
 		return nil, err
 	}
 
-	admins := []admin{
-		{
-			chadId:   237426682,
-			username: "ramil",
-		},
-		{
-			// TODO replace
-			chadId:   237426682,
-			username: "ramil",
-		},
+	as := admins{
+		{chadId: 237426682}, // me
+		{chadId: 666581102},
 	}
 
-	return &bot{bot: b, repo: r, log: log, admins: admins}, nil
+	return &bot{bot: b, log: log, admins: as}, nil
 }

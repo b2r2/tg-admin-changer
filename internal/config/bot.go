@@ -2,9 +2,7 @@ package config
 
 import "github.com/b2r2/tg-admin-changer/pkg"
 
-//const filename = ".env"
-// TODO
-const filename = "TOKEN"
+const filename = ".env"
 
 type bot struct {
 	token string
