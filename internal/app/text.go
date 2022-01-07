@@ -20,8 +20,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		cid := c.Message().Sender.ID
 
 		b.log.Println("cid", cid)
-		b.log.Println("c.Message().ReplyTo", c.Message().ReplyTo)
-		b.log.Println("c.Message().ReplyTo.OriginalSender.ID", c.Message().ReplyTo.OriginalSender.ID)
+		b.log.Println("b.admins[cid]", b.admins[cid])
 
 		if _, ok := b.admins[cid]; !ok {
 			_, err := b.bot.Forward(&tele.Chat{ID: channel}, c.Message(), &tele.SendOptions{
@@ -33,6 +32,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 			return nil
 		}
 		b.log.Println(1)
+		b.log.Println("c.Message().ReplyTo", c.Message().ReplyTo)
 
 		if c.Message().ReplyTo == nil {
 			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessage)
@@ -51,8 +51,10 @@ func (b *bot) OnText() tele.HandlerFunc {
 			return nil
 		}
 
-		id := c.Message().ReplyTo.OriginalSender.ID
 		b.log.Println(3)
+		b.log.Println("c.Message().ReplyTo.OriginalSender.ID", c.Message().ReplyTo.OriginalSender.ID)
+
+		id := c.Message().ReplyTo.OriginalSender.ID
 		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})
 		if err != nil {
 			b.log.Println("OnText(send message)", err)
