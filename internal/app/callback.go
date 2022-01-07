@@ -24,24 +24,24 @@ func (b *bot) OnCallback() tele.HandlerFunc {
 			b.log.Println(err)
 		}
 
+		var opts = &tele.SendOptions{
+			DisableWebPagePreview: true,
+			ParseMode:             tele.ModeMarkdown,
+		}
+
 		switch {
 		case strings.Contains(cb.Data, models.OnBtnPrice):
 			message = config.Get().GetMapping()[models.Pricing].String()
-			message += "\n\nПродолжайте писать в чат. Мы с Вами свяжемся."
+			opts.ReplyMarkup = b.inlinePrevMenu
 		case strings.Contains(cb.Data, models.OnContacts):
 			message = config.Get().GetMapping()[models.Contacts].String()
+			opts.ReplyMarkup = b.inlinePrevMenu
 		case strings.Contains(cb.Data, models.OnPrev):
 			message = config.Get().GetMapping()[models.Greeting].String()
+			opts.ReplyMarkup = b.inlineMainMenu
 		}
 
-		m := &tele.ReplyMarkup{}
-		inlinePrev := m.Data(models.OnPrev, models.OnPrev)
-		m.Inline(m.Row(inlinePrev))
-		_, err := b.bot.Edit(c.Message(), fmt.Sprintf(c.Message().Text+"\n\n"+message), &tele.SendOptions{
-			DisableWebPagePreview: true,
-			ParseMode:             tele.ModeMarkdown,
-		})
-		if err != nil {
+		if _, err := b.bot.Edit(c.Message(), fmt.Sprintf(message), opts); err != nil {
 			b.log.Println("OnCallback(edit message)", err)
 		}
 

@@ -5,50 +5,34 @@ import (
 	tele "gopkg.in/tucnak/telebot.v3"
 )
 
-const (
-	negativeMessage = `❗Сообщение не отправлено❗ 
-Необходимо выделить сообщение кому хочешь написать`
-	negativeMessageToBot = `❗Сообщение не отправлено❗ 
-Невозможно отправить сообщение боту`
-)
-
 func (b *bot) OnText() tele.HandlerFunc {
 	return func(c tele.Context) error {
-		m := &tele.ReplyMarkup{}
-		inlinePrev := m.Data(models.OnContacts, models.OnContacts)
-		m.Inline(m.Row(inlinePrev))
-
 		cid := c.Sender().ID
+		msg := c.Message()
 
 		if _, ok := b.admins[cid]; !ok {
-			_, err := b.bot.Forward(&tele.Chat{ID: models.Channel}, c.Message(), &tele.SendOptions{
-				ParseMode: tele.ModeMarkdown,
-			})
-			if err != nil {
+			if _, err := b.bot.Forward(&tele.Chat{ID: models.Channel}, msg); err != nil {
 				b.log.Println("OnText(forward message)", err)
 			}
 			return nil
 		}
 
-		if c.Message().ReplyTo == nil {
-			_, err := b.bot.Send(&tele.Chat{ID: models.Channel}, negativeMessage)
-			if err != nil {
+		if msg.ReplyTo == nil {
+			if _, err := b.bot.Send(&tele.Chat{ID: models.Channel}, models.NegativeMessage); err != nil {
 				b.log.Println("OnText(forward message)", err)
 			}
 			return nil
 		}
 
-		if c.Message().ReplyTo.OriginalSender == nil {
-			_, err := b.bot.Send(&tele.Chat{ID: models.Channel}, negativeMessageToBot)
-			if err != nil {
+		if msg.ReplyTo.OriginalSender == nil {
+			if _, err := b.bot.Send(&tele.Chat{ID: models.Channel}, models.NegativeMessageToBot); err != nil {
 				b.log.Println("OnText(forward message)", err)
 			}
 			return nil
 		}
 
-		id := c.Message().ReplyTo.OriginalSender.ID
-		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})
-		if err != nil {
+		cid = msg.ReplyTo.OriginalSender.ID
+		if _, err := b.bot.Send(&tele.Chat{ID: cid}, msg.Text); err != nil {
 			b.log.Println("OnText(send message)", err)
 		}
 		return nil

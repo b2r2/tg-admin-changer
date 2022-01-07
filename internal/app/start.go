@@ -10,12 +10,15 @@ import (
 func (b *bot) OnStart() tele.HandlerFunc {
 	return func(c tele.Context) error {
 		var msg = config.Get().GetMapping()[models.Greeting]
-		_, err := b.bot.Send(&tele.Chat{ID: c.Chat().ID}, msg.String(), &tele.SendOptions{
-			ReplyMarkup: menu,
-		})
+		opts := &tele.SendOptions{ReplyMarkup: b.inlineMainMenu}
+		m, err := b.bot.Send(&tele.Chat{ID: c.Chat().ID}, msg.String(), opts)
 		if err != nil {
 			b.log.Println("OnStart(send message)", err)
 		}
+		if err = b.bot.Pin(m); err != nil {
+			b.log.Println("OnStart(pin message)", err)
+		}
+
 		return nil
 	}
 }
