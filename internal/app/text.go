@@ -18,12 +18,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		inlinePrev := m.Data(models.OnContacts, models.OnContacts)
 		m.Inline(m.Row(inlinePrev))
 
-		cid := c.Message().Sender.ID
-		b.log.Println(c.Message().Sender)
-
-		b.log.Println("cid", cid)
-		_, ok := b.admins[cid]
-		b.log.Println("b.admins[cid]: ok", b.admins[cid], ok)
+		cid := c.Sender().ID
 
 		if _, ok := b.admins[cid]; !ok {
 			_, err := b.bot.Forward(&tele.Chat{ID: models.Channel}, c.Message(), &tele.SendOptions{
@@ -34,8 +29,6 @@ func (b *bot) OnText() tele.HandlerFunc {
 			}
 			return nil
 		}
-		b.log.Println(1)
-		b.log.Println("c.Message().ReplyTo", c.Message().ReplyTo)
 
 		if c.Message().ReplyTo == nil {
 			_, err := b.bot.Send(&tele.Chat{ID: models.Channel}, negativeMessage)
@@ -44,7 +37,6 @@ func (b *bot) OnText() tele.HandlerFunc {
 			}
 			return nil
 		}
-		b.log.Println(2)
 
 		if c.Message().ReplyTo.OriginalSender == nil {
 			_, err := b.bot.Send(&tele.Chat{ID: models.Channel}, negativeMessageToBot)
@@ -53,9 +45,6 @@ func (b *bot) OnText() tele.HandlerFunc {
 			}
 			return nil
 		}
-
-		b.log.Println(3)
-		b.log.Println("c.Message().ReplyTo.OriginalSender.ID", c.Message().ReplyTo.OriginalSender.ID)
 
 		id := c.Message().ReplyTo.OriginalSender.ID
 		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})

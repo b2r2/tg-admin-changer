@@ -46,6 +46,6 @@ jobs:
           script: |
             docker stop ${{ secrets.DOCKER_NAME }}
             docker rm ${{ secrets.DOCKER_NAME}}
-            docker rmi ${{ secrets.DOCKER_NAME }}:latest
+            docker rmi ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:latest
             docker system prune -f
             docker run -d --name ${{ secrets.DOCKER_NAME }} ${{ secrets.DOCKER_LOGIN}}/${{ secrets.DOCKER_NAME }}:latest

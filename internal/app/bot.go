@@ -31,7 +31,8 @@ func New(log *logrus.Logger, token string) (*bot, error) {
 	}
 
 	admins := make(map[int64]struct{})
-	admins[237426682] = struct{}{} // me
+	admins[237426682] = struct{}{}  // me
+	admins[1087968824] = struct{}{} // group ID
 	admins[666581102] = struct{}{}
 
 	return &bot{bot: b, log: log, admins: admins}, nil
