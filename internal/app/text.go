@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+
 	tele "gopkg.in/tucnak/telebot.v3"
 )
 
@@ -18,7 +20,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		m.Inline(m.Row(inlinePrev))
 
 		cid := c.Message().Sender.ID
-		if b.admins[0].chadId != cid && b.admins[1].chadId != cid {
+		if _, ok := b.admins[cid]; !ok {
 			_, err := b.bot.Forward(&tele.Chat{ID: channel}, c.Message(), &tele.SendOptions{
 				ParseMode: tele.ModeMarkdown,
 			})
@@ -45,6 +47,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		}
 
 		id := c.Message().ReplyTo.OriginalSender.ID
+		fmt.Println(id)
 		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})
 		if err != nil {
 			b.log.Println("OnText(send message)", err)

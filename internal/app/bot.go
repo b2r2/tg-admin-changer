@@ -13,18 +13,15 @@ const (
 	onPrev     = "Назад"
 	onStart    = "/start"
 	channel    = -1001707672035
+	//channel = -1001383844955 // debug
 )
 
 type (
 	bot struct {
 		log    *logrus.Logger
 		bot    *tele.Bot
-		admins admins
+		admins map[int64]struct{}
 	}
-	admin struct {
-		chadId int64
-	}
-	admins []admin
 )
 
 var (
@@ -42,10 +39,9 @@ func New(log *logrus.Logger, t string) (*bot, error) {
 		return nil, err
 	}
 
-	as := admins{
-		{chadId: 237426682}, // me
-		{chadId: 666581102},
-	}
+	as := make(map[int64]struct{})
+	as[237426682] = struct{}{} // me
+	as[666581102] = struct{}{}
 
 	return &bot{bot: b, log: log, admins: as}, nil
 }

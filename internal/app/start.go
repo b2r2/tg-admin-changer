@@ -14,7 +14,7 @@ func (b *bot) OnStart() tele.HandlerFunc {
 			ReplyMarkup: menu,
 		})
 		if err != nil {
-			b.log.Println("OnStart:", err)
+			b.log.Println("OnStart(send message)", err)
 		}
 		return nil
 	}
