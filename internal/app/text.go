@@ -17,22 +17,30 @@ func (b *bot) OnText() tele.HandlerFunc {
 			return nil
 		}
 
-		if msg.ReplyTo == nil {
-			if _, err := b.bot.Send(&tele.Chat{ID: models.Channel}, models.NegativeMessage); err != nil {
-				b.log.Println("OnText(forward message)", err)
+		message := ""
+		opts := &tele.SendOptions{}
+		switch {
+		case msg.ReplyTo == nil:
+			if _, ok := b.admins[msg.Chat.ID]; ok {
+				cid = msg.Sender.ID
+				message = models.SelfMessage
+				opts.ReplyMarkup = b.inlineMainMenu
 			}
-			return nil
+			if msg.Chat.ID == models.Channel {
+				cid = models.Channel
+				message = models.NegativeMessage
+			}
+		case msg.ReplyTo != nil && msg.ReplyTo.OriginalSender == nil:
+			if msg.ReplyTo.Chat.ID == models.Channel {
+				cid = models.Channel
+				message = models.NegativeMessageToBot
+			}
+		default:
+			cid = msg.ReplyTo.OriginalSender.ID
+			message = msg.Text
 		}
 
-		if msg.ReplyTo.OriginalSender == nil {
-			if _, err := b.bot.Send(&tele.Chat{ID: models.Channel}, models.NegativeMessageToBot); err != nil {
-				b.log.Println("OnText(forward message)", err)
-			}
-			return nil
-		}
-
-		cid = msg.ReplyTo.OriginalSender.ID
-		if _, err := b.bot.Send(&tele.Chat{ID: cid}, msg.Text); err != nil {
+		if _, err := b.bot.Send(&tele.Chat{ID: cid}, message, opts); err != nil {
 			b.log.Println("OnText(send message)", err)
 		}
 		return nil
