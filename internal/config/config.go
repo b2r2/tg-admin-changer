@@ -57,6 +57,7 @@ func (c *Config) GetMapping() map[string]*bytes.Buffer {
 
 func (c *Config) setTextFromFile() error {
 	for _, filename := range texts {
+		filename := fmt.Sprintf("/usr/local/app/%s", filename)
 		b, err := os.ReadFile(filename)
 		if err != nil {
 			return fmt.Errorf("error set mapping text from file: %w", err)
