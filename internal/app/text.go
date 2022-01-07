@@ -4,6 +4,13 @@ import (
 	tele "gopkg.in/tucnak/telebot.v3"
 )
 
+const (
+	negativeMessage = `❗Сообщение не отправлено❗ 
+Необходимо выделить сообщение кому хочешь написать`
+	negativeMessageToBot = `❗Сообщение не отправлено❗ 
+Невозможно отправить сообщение боту`
+)
+
 func (b *bot) OnText() tele.HandlerFunc {
 	return func(c tele.Context) error {
 		m := &tele.ReplyMarkup{}
@@ -21,10 +28,23 @@ func (b *bot) OnText() tele.HandlerFunc {
 			return nil
 		}
 
-		if c.Update().Message.ReplyTo.OriginalSender == nil {
+		if c.Message().ReplyTo == nil {
+			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessage)
+			if err != nil {
+				b.log.Println("OnText(forward message)", err)
+			}
 			return nil
 		}
-		id := c.Update().Message.ReplyTo.OriginalSender.ID
+
+		if c.Message().ReplyTo.OriginalSender == nil {
+			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessageToBot)
+			if err != nil {
+				b.log.Println("OnText(forward message)", err)
+			}
+			return nil
+		}
+
+		id := c.Message().ReplyTo.OriginalSender.ID
 		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})
 		if err != nil {
 			b.log.Println("OnText(send message)", err)
