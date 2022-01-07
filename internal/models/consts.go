@@ -10,10 +10,10 @@ const (
 	OnContacts = "Наши контакты"
 	OnPrev     = "Назад"
 	OnStart    = "/start"
-	//Filename   = ".env"
-	//Channel    = -1001707672035
-	Channel  = -1001383844955 // debug
-	Filename = "TOKEN"
+	Filename   = ".env"
+	Channel    = -1001707672035
+	//Channel  = -1001383844955 // debug
+	//Filename = "TOKEN"
 
 	NegativeMessage = `❗Сообщение не отправлено❗ 
 Необходимо выделить сообщение кому хочешь написать`
