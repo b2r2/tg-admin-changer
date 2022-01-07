@@ -12,7 +12,7 @@ const (
 	onContacts = "Наши контакты"
 	onPrev     = "Назад"
 	onStart    = "/start"
-	channel    = -1001383844955
+	channel    = -1001707672035
 )
 
 type (
