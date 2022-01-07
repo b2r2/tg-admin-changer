@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1.3
 FROM golang:1.17.1-alpine3.14 as build
 
-RUN sed -i 's/https\:\/\/dl-cdn.alpinelinux.org/http\:\/\/mirror.clarkson.edu/g' /etc/apk/repositories && apk add git --no-cache
 WORKDIR /usr/local/app
 COPY go.mod .
 COPY go.sum .
@@ -21,6 +20,6 @@ RUN --mount=type=secret,id=TOKEN \
     export TOKEN=$(cat /run/secrets/TOKEN) && \
     echo $TOKEN >> .env
 
-COPY --from=build /usr/local/app/tg-admin-changer /bin/tg-admin-changer
+COPY --from=build /usr/local/app/ .
 
-CMD /bin/tg-admin-changer
+CMD ["./tg-admin-changer"]
