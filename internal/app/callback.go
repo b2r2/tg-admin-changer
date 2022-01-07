@@ -25,17 +25,17 @@ func (b *bot) OnCallback() tele.HandlerFunc {
 		}
 
 		switch {
-		case strings.Contains(cb.Data, onBtnPrice):
+		case strings.Contains(cb.Data, models.OnBtnPrice):
 			message = config.Get().GetMapping()[models.Pricing].String()
 			message += "\n\nПродолжайте писать в чат. Мы с Вами свяжемся."
-		case strings.Contains(cb.Data, onContacts):
+		case strings.Contains(cb.Data, models.OnContacts):
 			message = config.Get().GetMapping()[models.Contacts].String()
-		case strings.Contains(cb.Data, onPrev):
+		case strings.Contains(cb.Data, models.OnPrev):
 			message = config.Get().GetMapping()[models.Greeting].String()
 		}
 
 		m := &tele.ReplyMarkup{}
-		inlinePrev := m.Data(onPrev, onPrev)
+		inlinePrev := m.Data(models.OnPrev, models.OnPrev)
 		m.Inline(m.Row(inlinePrev))
 		_, err := b.bot.Edit(c.Message(), fmt.Sprintf(c.Message().Text+"\n\n"+message), &tele.SendOptions{
 			DisableWebPagePreview: true,

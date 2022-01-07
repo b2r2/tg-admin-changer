@@ -7,15 +7,6 @@ import (
 	tele "gopkg.in/tucnak/telebot.v3"
 )
 
-const (
-	onBtnPrice = "Наши каналы и цены"
-	onContacts = "Наши контакты"
-	onPrev     = "Назад"
-	onStart    = "/start"
-	channel    = -1001707672035
-	//channel = -1001383844955 // debug
-)
-
 type (
 	bot struct {
 		log    *logrus.Logger

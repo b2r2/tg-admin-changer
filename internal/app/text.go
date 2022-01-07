@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/b2r2/tg-admin-changer/internal/models"
 	tele "gopkg.in/tucnak/telebot.v3"
 )
 
@@ -14,17 +15,18 @@ const (
 func (b *bot) OnText() tele.HandlerFunc {
 	return func(c tele.Context) error {
 		m := &tele.ReplyMarkup{}
-		inlinePrev := m.Data(onContacts, onContacts)
+		inlinePrev := m.Data(models.OnContacts, models.OnContacts)
 		m.Inline(m.Row(inlinePrev))
 
 		cid := c.Message().Sender.ID
+		b.log.Println(c.Message().Sender)
 
 		b.log.Println("cid", cid)
 		_, ok := b.admins[cid]
 		b.log.Println("b.admins[cid]: ok", b.admins[cid], ok)
 
 		if _, ok := b.admins[cid]; !ok {
-			_, err := b.bot.Forward(&tele.Chat{ID: channel}, c.Message(), &tele.SendOptions{
+			_, err := b.bot.Forward(&tele.Chat{ID: models.Channel}, c.Message(), &tele.SendOptions{
 				ParseMode: tele.ModeMarkdown,
 			})
 			if err != nil {
@@ -36,7 +38,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		b.log.Println("c.Message().ReplyTo", c.Message().ReplyTo)
 
 		if c.Message().ReplyTo == nil {
-			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessage)
+			_, err := b.bot.Send(&tele.Chat{ID: models.Channel}, negativeMessage)
 			if err != nil {
 				b.log.Println("OnText(forward message)", err)
 			}
@@ -45,7 +47,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		b.log.Println(2)
 
 		if c.Message().ReplyTo.OriginalSender == nil {
-			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessageToBot)
+			_, err := b.bot.Send(&tele.Chat{ID: models.Channel}, negativeMessageToBot)
 			if err != nil {
 				b.log.Println("OnText(forward message)", err)
 			}
