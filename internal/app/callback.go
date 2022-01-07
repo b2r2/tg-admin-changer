@@ -42,7 +42,7 @@ func (b *bot) OnCallback() tele.HandlerFunc {
 			ParseMode:             tele.ModeMarkdown,
 		})
 		if err != nil {
-			b.log.Println("OnCallback", err)
+			b.log.Println("OnCallback(edit message)", err)
 		}
 
 		return nil

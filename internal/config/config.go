@@ -2,19 +2,10 @@ package config
 
 import (
 	"bytes"
-	"fmt"
-	"os"
 
 	"github.com/b2r2/tg-admin-changer/internal/models"
 	"github.com/sirupsen/logrus"
 )
-
-var texts []string
-
-func init() {
-	files := []string{models.Greeting, models.Pricing, models.Contacts}
-	texts = append(texts, files...)
-}
 
 type Config struct {
 	bot     *bot
@@ -33,10 +24,10 @@ func Load() error {
 	conf = &Config{
 		bot:     b,
 		logger:  logrus.New(),
-		mapping: make(map[string]*bytes.Buffer),
+		mapping: models.Texts,
 	}
 
-	return conf.setTextFromFile()
+	return nil
 }
 
 func Get() *Config {
@@ -53,17 +44,4 @@ func (c *Config) GetLogger() *logrus.Logger {
 
 func (c *Config) GetMapping() map[string]*bytes.Buffer {
 	return conf.mapping
-}
-
-func (c *Config) setTextFromFile() error {
-	for _, filename := range texts {
-		filename := fmt.Sprintf("/usr/local/app/%s", filename)
-		b, err := os.ReadFile(filename)
-		if err != nil {
-			return fmt.Errorf("error set mapping text from file: %w", err)
-		}
-
-		c.mapping[filename] = bytes.NewBuffer(b)
-	}
-	return nil
 }

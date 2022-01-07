@@ -1,4 +1,6 @@
-Наши каналы:
+package models
+
+const price = `Наши каналы:
 
 - [NOP::Nuances of programming](https://t.me/nuancesprog), тематика *IT/образование*
 Цена:
@@ -29,3 +31,4 @@
     1 490 р
 Условия:
     4 часа в топе и 48 в ленте
+`

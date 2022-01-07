@@ -20,6 +20,6 @@ RUN --mount=type=secret,id=TOKEN \
     export TOKEN=$(cat /run/secrets/TOKEN) && \
     echo $TOKEN >> .env
 
-COPY --from=build /usr/local/app/ .
+COPY --from=build /usr/local/app/tg-admin-changer /bin/tg-admin-changer
 
-CMD ["./tg-admin-changer"]
+CMD /bin/tg-admin-changer

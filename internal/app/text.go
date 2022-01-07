@@ -16,7 +16,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 				ParseMode: tele.ModeMarkdown,
 			})
 			if err != nil {
-				b.log.Println("OnText", err)
+				b.log.Println("OnText(forward message)", err)
 			}
 			return nil
 		}
@@ -27,7 +27,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		id := c.Update().Message.ReplyTo.OriginalSender.ID
 		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})
 		if err != nil {
-			b.log.Println("OnText", err)
+			b.log.Println("OnText(send message)", err)
 		}
 		return nil
 	}
