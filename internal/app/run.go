@@ -5,7 +5,7 @@ import (
 )
 
 func (b *bot) Run() {
-	b.log.Println("start bot[", b.bot.Token, "]")
+	b.log.Printf("start bot[%s]\n", b.bot.Token)
 	var (
 		m              = &tele.ReplyMarkup{}
 		inlineBtnPrice = m.Data(onBtnPrice, onBtnPrice)

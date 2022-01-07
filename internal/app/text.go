@@ -20,7 +20,8 @@ func (b *bot) OnText() tele.HandlerFunc {
 		cid := c.Message().Sender.ID
 
 		b.log.Println("cid", cid)
-		b.log.Println("b.admins[cid]", b.admins[cid])
+		_, ok := b.admins[cid]
+		b.log.Println("b.admins[cid]: ok", b.admins[cid], ok)
 
 		if _, ok := b.admins[cid]; !ok {
 			_, err := b.bot.Forward(&tele.Chat{ID: channel}, c.Message(), &tele.SendOptions{
