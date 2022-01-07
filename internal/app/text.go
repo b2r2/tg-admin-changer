@@ -1,8 +1,6 @@
 package app
 
 import (
-	"fmt"
-
 	tele "gopkg.in/tucnak/telebot.v3"
 )
 
@@ -20,6 +18,11 @@ func (b *bot) OnText() tele.HandlerFunc {
 		m.Inline(m.Row(inlinePrev))
 
 		cid := c.Message().Sender.ID
+
+		b.log.Println("cid", cid)
+		b.log.Println("c.Message().ReplyTo", c.Message().ReplyTo)
+		b.log.Println("c.Message().ReplyTo.OriginalSender.ID", c.Message().ReplyTo.OriginalSender.ID)
+
 		if _, ok := b.admins[cid]; !ok {
 			_, err := b.bot.Forward(&tele.Chat{ID: channel}, c.Message(), &tele.SendOptions{
 				ParseMode: tele.ModeMarkdown,
@@ -29,6 +32,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 			}
 			return nil
 		}
+		b.log.Println(1)
 
 		if c.Message().ReplyTo == nil {
 			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessage)
@@ -37,6 +41,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 			}
 			return nil
 		}
+		b.log.Println(2)
 
 		if c.Message().ReplyTo.OriginalSender == nil {
 			_, err := b.bot.Send(&tele.Chat{ID: channel}, negativeMessageToBot)
@@ -47,7 +52,7 @@ func (b *bot) OnText() tele.HandlerFunc {
 		}
 
 		id := c.Message().ReplyTo.OriginalSender.ID
-		fmt.Println(id)
+		b.log.Println(3)
 		_, err := b.bot.Send(&tele.Chat{ID: id}, c.Message().Text, &tele.SendOptions{ReplyMarkup: m})
 		if err != nil {
 			b.log.Println("OnText(send message)", err)
