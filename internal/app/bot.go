@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/b2r2/tg-admin-changer/internal/models"
-
 	"github.com/sirupsen/logrus"
 	tele "gopkg.in/tucnak/telebot.v3"
 )
